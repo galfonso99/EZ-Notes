@@ -2,13 +2,25 @@ import React, {useState, useEffect} from 'react';
 import Header from './Header'
 import {saveNotes, generateId, getRef} from './Firebase'
 
+
 const HomePage: React.FC = () => {
     const [text,setText] = useState("")
     const [fontFamily, setFontFamily] = useState("Comic Sans MS")
 
     useEffect(() => {
-        console.log(generateId())
+        let font = localStorage.getItem('font')
+        font !== null && setFontFamily(font)
+        // let Text = localStorage.getItem('text')
+        // Text !== null && setText(Text)
     }, [])
+
+    useEffect(() => {
+        localStorage.setItem('font', fontFamily)
+    }, [fontFamily])
+
+    // useEffect(() => {
+    //     localStorage.setItem('text', text)
+    // }, [text])
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setText(e.target.value)

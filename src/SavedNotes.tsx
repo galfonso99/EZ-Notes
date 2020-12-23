@@ -2,19 +2,20 @@ import React, {useState, useEffect} from 'react';
 import Header from './Header'
 import {saveNotes, generateId, getRef} from './Firebase'
 
-interface Props {
-    params: 
-        {tokenId: string}
-    
-}
 
 const HomePage: React.FC<{match: {params: {id: string}}}> = (props) => {
-    const [text,setText] = useState("")
+    const [text,setText] = useState("Loading...")
     const [fontFamily, setFontFamily] = useState("Comic Sans MS")
 
     useEffect(() => {
         setNote()
+        let stored = localStorage.getItem('font')
+        stored !== null && setFontFamily(stored)
     },[])
+
+    useEffect(() => {
+        localStorage.setItem('font', fontFamily)
+    }, [fontFamily])
 
     let fetchNote = async () => {
         return new Promise<string>((resolve, reject) => {
