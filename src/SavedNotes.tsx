@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Header from './Header'
-import {saveNotes, generateId, getRef} from './Firebase'
+import {saveNotes, getRef} from './Firebase'
 
 
 const HomePage: React.FC<{match: {params: {id: string}}}> = (props) => {
@@ -8,26 +8,28 @@ const HomePage: React.FC<{match: {params: {id: string}}}> = (props) => {
     const [fontFamily, setFontFamily] = useState("Comic Sans MS")
 
     useEffect(() => {
+        const setNote = async () => {
+            setText(await fetchNote())
+        }
+        const fetchNote = async () => {
+            return new Promise<string>((resolve, reject) => {
+              getRef(props.match.params.id).once('value', (snapshot) => {
+                resolve(snapshot.val())
+              })
+            })
+        }
         setNote()
         let stored = localStorage.getItem('font')
         stored !== null && setFontFamily(stored)
-    },[])
+    },[props.match.params.id])
 
     useEffect(() => {
         localStorage.setItem('font', fontFamily)
     }, [fontFamily])
 
-    let fetchNote = async () => {
-        return new Promise<string>((resolve, reject) => {
-          getRef(props.match.params.id).once('value', (snapshot) => {
-            resolve(snapshot.val())
-          })
-        })
-      }
+    
 
-    let setNote = async () => {
-        setText(await fetchNote())
-    }
+    
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setText(e.target.value)
@@ -38,7 +40,7 @@ const HomePage: React.FC<{match: {params: {id: string}}}> = (props) => {
     }
 
     const saveNote = () => {
-        let id = generateId()
+        let id = props.match.params.id
         saveNotes(id, text)
         return id
     }
