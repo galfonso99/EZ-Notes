@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Header from './Header'
-import {saveNotes, generateId, getRef} from './Firebase'
+import {saveNotes, generateId} from './Firebase'
 
 
 const HomePage: React.FC = () => {
