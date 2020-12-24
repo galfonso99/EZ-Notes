@@ -15,6 +15,8 @@ const Menu = (props: Props) => {
   const [id, setId] = useState("")
   const [redir, setRedir] = useState(false)
 
+
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -34,13 +36,12 @@ const Menu = (props: Props) => {
     if (redir) {
       return <Redirect to = {id} />
     }
-    return
   }
 
   return (
-    <div style= {{paddingLeft: "65%"}}>
+    <div style= {{  width: "152px", position: "absolute",  right: "2%"}}>
       {renderRedir()}
-      <Button aria-controls="simple-menu" aria-haspopup="true" variant="contained" size="medium" color = "primary" onClick={handleClick}>
+      <Button aria-controls="simple-menu" aria-haspopup="true" variant="contained" size="small" color = "primary" onClick={handleClick}>
         Font
       </Button>
       <SimpleMenu
@@ -59,7 +60,7 @@ const Menu = (props: Props) => {
         <MenuItem onClick={()=>handleClose("Bradley Hand")}>Bradley Hand</MenuItem>
         <MenuItem onClick={()=>handleClose("Brush Script MT")}>Brush Script MT</MenuItem>
       </SimpleMenu>
-      <Button style = {{marginLeft: "20px"}} variant="contained" size="medium" color = "primary" onClick={saveButton}>
+      <Button style = {{marginLeft: "10px"}} variant="contained" size="small" color = "primary" onClick={saveButton}>
         Save
       </Button>
     </div>
