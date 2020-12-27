@@ -1,12 +1,20 @@
 
-import firebaseAccount from './firebase_account.json';
+
 import fb from "firebase/app"
 import "firebase/database"
 
-const config = firebaseAccount;
+const config = {
+    apiKey: process.env.REACT_APP_API_KEY,
+    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+    databaseURL: process.env.REACT_APP_FIREBASE_DATABASE,
+    projectId: process.env.REACT_APP_FIREBASE_PROJECT,
+    storageBucket: process.env.REACT_APP_FIREBASE_STORAGE,
+    messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING,
+    appId: process.env.REACT_APP_FIREBASE_APP,
+    measurementId: process.env.REACT_APP_FIREBASE_MEASURE
+}
 
 fb.initializeApp(config);
-
 
 
 export const saveNotes = (id: string, text: string) => {
