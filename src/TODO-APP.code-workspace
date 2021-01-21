@@ -9,5 +9,8 @@
 		{
 			"path": "../../CEN/geek-text-ui"
 		}
-	]
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "todo-app"
+	}
 }
