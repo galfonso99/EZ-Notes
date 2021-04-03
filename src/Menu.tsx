@@ -7,7 +7,7 @@ import {Redirect} from 'react-router-dom'
 
 interface Props {
     setFont: (s: string) => void
-    saveNote: () => string
+    saveNote: () => Promise<string>
   }
 
 const Menu = (props: Props) => {
@@ -26,8 +26,8 @@ const Menu = (props: Props) => {
     setAnchorEl(null);
   };
 
-  const saveButton = () => {
-    let _id = props.saveNote()
+  const saveButton = async () => {
+    let _id = await props.saveNote()
     setId(_id)
     setRedir(true)
   }

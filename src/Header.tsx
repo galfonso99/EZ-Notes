@@ -4,7 +4,7 @@ import Menu from './Menu'
 
 interface Props {
   setFont: (s: string) => void
-  saveNote: () => string
+  saveNote: () => Promise<string>
 }
 
 const Header = (props: Props) => {

@@ -17,7 +17,7 @@ const config = {
 fb.initializeApp(config);
 
 
-export const saveNotes = (id: string, text: string) => {
+export const saveNotes = async (id: string, text: string) => {
     let obj:{ [key: string]: string } = {}
     obj[id] = text
     fb['database']().ref().update(obj);

@@ -27,7 +27,22 @@ const HomePage: React.FC<{match: {params: {id: string}}}> = (props) => {
         localStorage.setItem('font', fontFamily)
     }, [fontFamily])
 
-    
+    const keybinds = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key === 'Tab') {
+            e.preventDefault()
+            e.currentTarget.setRangeText(
+                '    ',
+                e.currentTarget.selectionStart,
+                e.currentTarget.selectionStart,
+                'end'
+            )
+        }
+        //For Mac only using the meta (Command key)
+        if (e.metaKey && e.key === "s") {
+            e.preventDefault()
+            saveNote()
+        }
+    } 
 
     
 
@@ -39,7 +54,7 @@ const HomePage: React.FC<{match: {params: {id: string}}}> = (props) => {
         setFontFamily(s)
     }
 
-    const saveNote = () => {
+    const saveNote = async () => {
         let id = props.match.params.id
         saveNotes(id, text)
         return id
@@ -56,6 +71,7 @@ const HomePage: React.FC<{match: {params: {id: string}}}> = (props) => {
                 style= {textStyle}
                 value={text}
                 onChange={handleChange}
+                onKeyDown = {keybinds}
             />
             </div>
         </div>
