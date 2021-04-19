@@ -15,7 +15,7 @@ const Header = (props: Props) => {
     <div style={{ height: '8vh', width: "96vw",borderTopLeftRadius: 20, borderTopRightRadius: 20, backgroundColor: "rgb(167, 167, 167)", alignItems: 'center', display: "flex",}}>
         
         <a style = {{color: "inherit", textDecoration: "none"}} href = "/">
-        <text style={{fontFamily: "Comic Sans MS", fontSize: "xx-large", fontWeight: "bold",  verticalAlign: "middle", paddingLeft: 20,WebkitTextStroke:  "1px rgba(237, 237, 131, 0.797)"}}> 
+        <text style={{fontFamily: "Comic Sans MS", fontSize: "clamp(15px, min(4vh, 6vw), 130px)", fontWeight: "bold",  verticalAlign: "middle", paddingLeft: 20,WebkitTextStroke:  "1px rgba(237, 237, 131, 0.797)"}}> 
             EZ Notes
         </text>
         </a>

@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
-import Button from '@material-ui/core/Button';
+import Button from './Button';
 import SimpleMenu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import { withStyles } from '@material-ui/core/styles';
 import {Redirect} from 'react-router-dom'
 
 
@@ -38,10 +39,22 @@ const Menu = (props: Props) => {
     }
   }
 
+  // const Button = withStyles({
+  //   root: {
+  //     height: 'clamp(7px, min(4.5vh, 6vw), 35px)',
+  //     width: 'clamp(9px, 8vw, 70px)', 
+  //     minWidth: '9px'
+  //   },
+  //   label: {
+  //     textTransform: 'capitalize',
+  //     fontSize: "clamp(5px, 2.5vw, 17px)"
+  //   }
+  // })(MaterialButton);
+
   return (
-    <div style= {{  width: "152px", position: "absolute",  right: "2%"}}>
+    <div style= {{  width: "clamp(90px, 20%, 300px", position: "absolute",  right: "2%"}}>
       {renderRedir()}
-      <Button aria-controls="simple-menu" aria-haspopup="true" variant="contained" size="small" color = "primary" onClick={handleClick}>
+      <Button aria-controls="simple-menu" aria-haspopup="true" variant="contained" color = "primary" onClick={handleClick}>
         Font
       </Button>
       <SimpleMenu
@@ -60,7 +73,7 @@ const Menu = (props: Props) => {
         <MenuItem onClick={()=>handleClose("Bradley Hand")}>Bradley Hand</MenuItem>
         <MenuItem onClick={()=>handleClose("Brush Script MT")}>Brush Script MT</MenuItem>
       </SimpleMenu>
-      <Button style = {{marginLeft: "10px"}} variant="contained" size="small" color = "primary" onClick={saveButton}>
+      <Button style = {{marginLeft: "10px"}} variant="contained" color = "primary" onClick={saveButton}>
         Save
       </Button>
     </div>
