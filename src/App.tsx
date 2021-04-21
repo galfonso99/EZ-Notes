@@ -3,7 +3,6 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import './App.css';
 import HomePage from './HomePage'
-import SavedNotes from './SavedNotes'
 
 const App: React.FC = () => {
   return (
@@ -11,7 +10,7 @@ const App: React.FC = () => {
     <div>
         <Switch>
          <Route path="/" component={HomePage} exact/>
-         <Route path="/:id" component={SavedNotes}/>
+         <Route path="/:id" component={HomePage}/>
        </Switch>
     </div> 
   </BrowserRouter>

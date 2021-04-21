@@ -1,44 +1,49 @@
 import React, {useState, useEffect} from 'react';
 import Header from './Header'
-import {saveNotes, generateId} from './Firebase'
+import {saveNotes, generateId, getRef} from './Firebase'
 import {Redirect} from 'react-router-dom'
 
-const HomePage = (props: any) => {
+
+const HomePage: React.FC<{match: {params: {id: string}}}> = (props) => {
     const [text,setText] = useState("")
     const [fontFamily, setFontFamily] = useState("Comic Sans MS")
-    const [id, setId] = useState("")
+    const [paper, setPaper] = useState('https://i.imgur.com/QyKroGy.png')
+    const [id, setId] = useState(props.match.params.id)
     const [redir, setRedir] = useState(false)
-
+    
+    
+    const isNewNote = !props.match.params.id
 
     useEffect(() => {
+        !isNewNote && setText("Loading...")
         let font = localStorage.getItem('font')
         font !== null && setFontFamily(font)
-        // let Text = localStorage.getItem('text')
-        // Text !== null && setText(Text)
-
-        /*
-        const textarea = document.querySelector('textarea')!
-        textarea.addEventListener('keydown', (e: KeyboardEvent) => {
-        if (e.key === 'Tab') {
-            e.preventDefault()
-
-            textarea.setRangeText(
-            '    ',
-            textarea.selectionStart,
-            textarea.selectionStart,
-            'end'
-            )
-        }
-        }) */
-    }, [])
+        let paperColor = localStorage.getItem('paper')
+        paperColor !== null && setPaper(paperColor)
+    }, [isNewNote])
 
     useEffect(() => {
+        if (isNewNote) return
+        const fetchNote = async () => {
+            return new Promise<string>((resolve, reject) => {
+              getRef(props.match.params.id).once('value', (snapshot) => {
+                resolve(snapshot.val())
+              })
+            })
+        };
+        (
+            async () => {
+                setText(await fetchNote());
+            }
+        )()
+        
+    },[props.match.params.id, isNewNote])
+    
+    useEffect(() => {
         localStorage.setItem('font', fontFamily)
-    }, [fontFamily])
+        localStorage.setItem('paper', paper)
+    }, [fontFamily, paper])
 
-    // useEffect(() => {
-    //     localStorage.setItem('text', text)
-    // }, [text])
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setText(e.target.value)
@@ -49,9 +54,10 @@ const HomePage = (props: any) => {
     }
 
     const saveNote = async () => {
-        let id = generateId()
-        await saveNotes(id, text)
-        return id
+        let _id = isNewNote ? generateId() : id
+        await saveNotes(_id, text)
+        setId(_id)
+        return _id
     }
 
     const redirect = () => {
@@ -71,20 +77,19 @@ const HomePage = (props: any) => {
         //For Mac only using the meta (Command key)
         if (e.metaKey && e.key === "s") {
             e.preventDefault()
-            let id = await saveNote()
-            setId(id)
-            setRedir(true)
+            await saveNote()
+            isNewNote && setRedir(true)
         }
     }    
 
-    const textStyle:React.CSSProperties = {fontFamily: fontFamily, fontSize:25, fontWeight: "bold", border : "none", outline: 'none', resize: "none", width: "100%",WebkitBoxSizing: "border-box", MozBoxSizing: "border-box", boxSizing: "border-box"  ,lineHeight: 1.6, height: "88%",borderBottomLeftRadius: 20,  borderBottomRightRadius: 20,backgroundImage: "url(https://i.imgur.com/QyKroGy.png)", paddingLeft: 20}
+    const textStyle:React.CSSProperties = {fontFamily: fontFamily, fontSize:25, fontWeight: "bold", border : "none", outline: 'none', resize: "none", width: "100%",WebkitBoxSizing: "border-box", MozBoxSizing: "border-box", boxSizing: "border-box"  ,lineHeight: 1.6, height: "88%",borderBottomLeftRadius: 20,  borderBottomRightRadius: 20,backgroundImage: `url(${paper})`, paddingLeft: 20}
 
 
     return (
-        <div style={{ backgroundImage: "url(https://cdn.wallpapersafari.com/29/47/wsCP4d.jpg)", paddingTop: "1vh", width: "100vw"}}>
+        <div style={{ backgroundImage: "url(https://i.imgur.com/Ua2AD3i.png)", paddingTop: "1vh",}}>
             {redirect()}
             <div style = {{height: "99vh", display: "block", marginLeft: "2vw", width:"96vw"}}>
-            <Header setFont= {setFont} saveNote = {saveNote} />
+            <Header setFont= {setFont} saveNote = {saveNote} setPaper = {(paper:string) => setPaper(paper)}/>
             <textarea
                 style= {textStyle}
                 value={text}
