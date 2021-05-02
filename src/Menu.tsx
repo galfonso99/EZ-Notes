@@ -56,6 +56,10 @@ const Menu = (props: Props) => {
     }
   }
 
+  const changeCursor = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+    (e.target as HTMLButtonElement).style.cursor = 'pointer';
+  }
+
   return (
     <div style= {{  width: "clamp(130px, 20%, 300px", position: "absolute",  right: "2%"}}>
       {renderRedir()}
@@ -87,6 +91,7 @@ const Menu = (props: Props) => {
           style={{position: 'relative', top: '13px', left: '5px'}}
           aria-controls="color-theme" aria-haspopup="true"
           onClick={event => setAnchorTheme(event.currentTarget)}
+          onMouseOver={changeCursor}
       />
       <SimpleMenu
         id="color-theme"
