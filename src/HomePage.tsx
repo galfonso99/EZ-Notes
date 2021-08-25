@@ -100,12 +100,15 @@ const HomePage: React.FC<{ match: { params: { id: string } } }> = (props) => {
     borderBottomRightRadius: 20,
     backgroundImage: `url(${paper})`,
     paddingLeft: 20,
+    marginTop: 0
   }
 
   return (
     <div
       style={{
-        backgroundImage: "url(https://i.imgur.com/Ua2AD3i.png)",
+        backgroundImage: "url(https://i.imgur.com/DgyfVBa.jpeg)",
+        backgroundSize: "cover",
+        // backgroundRepeat: "no-repeat",
         paddingTop: "1vh",
       }}
     >
