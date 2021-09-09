@@ -9,6 +9,7 @@ const HomePage: React.FC<{ match: { params: { id: string } } }> = (props) => {
   const [paper, setPaper] = useState("https://i.imgur.com/QyKroGy.png")
   const [id, setId] = useState(props.match.params.id)
   const [redir, setRedir] = useState(false)
+  const [displayLinks, setDisplayLinks] = useState(false)
 
   const isNewNote = !props.match.params.id
 
@@ -18,10 +19,13 @@ const HomePage: React.FC<{ match: { params: { id: string } } }> = (props) => {
     font !== null && setFontFamily(font)
     let paperColor = localStorage.getItem("paper")
     paperColor !== null && setPaper(paperColor)
+    let display_links = localStorage.getItem("links")
+    display_links !== null && !isNewNote && setDisplayLinks(!!display_links)
   }, [isNewNote])
 
   useEffect(() => {
     if (isNewNote) return
+    //Define fetch note inside useEffect bc useEffect cannot be async
     const fetchNote = async () => {
       return new Promise<string>((resolve, reject) => {
         getRef(props.match.params.id).once("value", (snapshot) => {
@@ -29,20 +33,36 @@ const HomePage: React.FC<{ match: { params: { id: string } } }> = (props) => {
         })
       })
     }
-    // setText state and change site title
-    ;(async () => {
+    //Anonymous function to run async code inside useEffect
+    (async () => {
       let _text = await fetchNote()
       setText(_text)
-      // Update website title with first line of text limited to 20 characters
-      document.title = _text.split("\n")[0].slice(0, 20)
+      // Update website title with first line of text limited to 40 characters
+      document.title = _text.split("\n")[0].slice(0, 40)
+
+      //Find links in text and display them in the box below
+      let links = findLinks(_text)
+      let linkDivArea = document.getElementById("linkBox")!
+      links.forEach((link) => linkDivArea.innerHTML += `<a id="link" href=//${link}>${link}</a> `)
+
     })()
-    console.log(document.title)
   }, [props.match.params.id, isNewNote])
 
   useEffect(() => {
     localStorage.setItem("font", fontFamily)
     localStorage.setItem("paper", paper)
-  }, [fontFamily, paper])
+    localStorage.setItem("links", displayLinks ? "true" : "")
+
+  }, [fontFamily, paper, displayLinks])
+
+
+  useEffect(() => {
+    if (displayLinks) {
+      let links = findLinks(text);
+      let linkDivArea = document.getElementById("linkBox")!
+      links.forEach((link) => linkDivArea.innerHTML += `<a id="link" href=//${link}>${link}</a> `)
+    }
+  }, [displayLinks])
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value)
@@ -83,6 +103,19 @@ const HomePage: React.FC<{ match: { params: { id: string } } }> = (props) => {
     }
   }
 
+  const findLinks = (text: string) => {
+    var expression = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@%_\+.~#?&//=]*)/gi;
+    var regex = new RegExp(expression);
+    let iter = text.matchAll(regex)
+    let array = []
+    for (let match of iter) {
+      let string = match[0].startsWith('http') ? match[0].split('//')[1] : match[0]
+      array.push(string)
+    }
+    return array
+  }
+
+
   const textStyle: React.CSSProperties = {
     fontFamily: fontFamily,
     fontSize: 25,
@@ -95,12 +128,12 @@ const HomePage: React.FC<{ match: { params: { id: string } } }> = (props) => {
     MozBoxSizing: "border-box",
     boxSizing: "border-box",
     lineHeight: 1.6,
-    height: "88%",
+    height: displayLinks ? "80%" : "90%",
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     backgroundImage: `url(${paper})`,
     paddingLeft: 20,
-    marginTop: 0
+    marginTop: 0,
   }
 
   return (
@@ -108,7 +141,7 @@ const HomePage: React.FC<{ match: { params: { id: string } } }> = (props) => {
       style={{
         backgroundImage: "url(https://i.imgur.com/DgyfVBa.jpeg)",
         backgroundSize: "cover",
-        // backgroundRepeat: "no-repeat",
+        backgroundRepeat: "repeat",
         paddingTop: "1vh",
       }}
     >
@@ -125,6 +158,8 @@ const HomePage: React.FC<{ match: { params: { id: string } } }> = (props) => {
           setFont={setFont}
           saveNote={saveNote}
           setPaper={(paper: string) => setPaper(paper)}
+          setDisplayLinks={() => setDisplayLinks(!displayLinks)}
+
         />
         <textarea
           style={textStyle}
@@ -132,6 +167,24 @@ const HomePage: React.FC<{ match: { params: { id: string } } }> = (props) => {
           onChange={handleChange}
           onKeyDown={keybinds}
         />
+
+        <div
+          className="Links"
+          id="linkBox"
+          style={{
+            ...textStyle,
+            height: "10%",
+            borderRadius: 20,
+            marginTop: 5,
+            fontSize: 18,
+            overflowY: "scroll",
+            backgroundImage: `url(${paper})`,
+            display: (displayLinks ? "inline-block" : "none"),
+          }}
+        //onKeyDown={handleChange}
+        //contentEditable="true"
+        ></div>
+
       </div>
     </div>
   )

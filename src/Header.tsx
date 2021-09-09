@@ -5,6 +5,7 @@ import Menu from './Menu'
 interface Props {
   setFont: (s: string) => void
   setPaper: (paper: string) => void
+  setDisplayLinks: () => void
   saveNote: () => Promise<string>
 }
 
@@ -29,7 +30,7 @@ const Header = (props: Props) => {
             EZ Notes
         </text>
         </a>
-        <Menu setFont= {props.setFont} saveNote = {props.saveNote} setHeader = {(header: string) => setHeader(header)} setPaper = {props.setPaper} />
+        <Menu setFont= {props.setFont} saveNote = {props.saveNote} setHeader = {(header: string) => setHeader(header)} setPaper = {props.setPaper} setDisplayLinks = {props.setDisplayLinks} />
     </div>
   );
 }

@@ -3,8 +3,8 @@ import { withStyles } from '@material-ui/core/styles';
 
 export default withStyles({
     root: {
-      height: 'clamp(7px, min(4.5vh, 6vw), 35px)',
-      width: 'clamp(9px, 8vw, 70px)', 
+      height: 'clamp(7px, min(3.5vh, 4.5vw), 35px)',
+      width: 'clamp(9px, 6vw, 70px)', 
       minWidth: '9px'
     },
     label: {
