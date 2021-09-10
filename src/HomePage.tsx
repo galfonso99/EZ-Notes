@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import Header from "./Header"
 import { saveNotes, generateId, getRef } from "./Firebase"
 import { Redirect } from "react-router-dom"
@@ -10,6 +10,8 @@ const HomePage: React.FC<{ match: { params: { id: string } } }> = (props) => {
   const [id, setId] = useState(props.match.params.id)
   const [redir, setRedir] = useState(false)
   const [displayLinks, setDisplayLinks] = useState(false)
+  const hasDisplayedLinks = useRef(false)
+
 
   const isNewNote = !props.match.params.id
 
@@ -43,6 +45,7 @@ const HomePage: React.FC<{ match: { params: { id: string } } }> = (props) => {
       //Find links in text and display them in the box below
       let links = findLinks(_text)
       let linkDivArea = document.getElementById("linkBox")!
+      linkDivArea.innerHTML = ""  //Empty the LinkArea
       links.forEach((link) => linkDivArea.innerHTML += `<a id="link" href=//${link}>${link}</a> `)
 
     })()
@@ -57,12 +60,17 @@ const HomePage: React.FC<{ match: { params: { id: string } } }> = (props) => {
 
 
   useEffect(() => {
-    if (displayLinks) {
+    if (displayLinks && !hasDisplayedLinks.current) {
       let links = findLinks(text);
       let linkDivArea = document.getElementById("linkBox")!
+      linkDivArea.innerHTML = ""  //Empty the LinkArea
       links.forEach((link) => linkDivArea.innerHTML += `<a id="link" href=//${link}>${link}</a> `)
+      hasDisplayedLinks.current = true
     }
-  }, [displayLinks])
+    else if (!displayLinks) {
+      hasDisplayedLinks.current = false
+    }
+  }, [displayLinks, isNewNote, text])
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value)
@@ -104,7 +112,7 @@ const HomePage: React.FC<{ match: { params: { id: string } } }> = (props) => {
   }
 
   const findLinks = (text: string) => {
-    var expression = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@%_\+.~#?&//=]*)/gi;
+    var expression = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@%_+.~#?&//=]*)/gi;
     var regex = new RegExp(expression);
     let iter = text.matchAll(regex)
     let array = []
