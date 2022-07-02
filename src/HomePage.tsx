@@ -16,6 +16,7 @@ const HomePage: React.FC<{ match: { params: { id: string } } }> = (props) => {
   const isNewNote = !props.match.params.id
 
   useEffect(() => {
+    // Fetch preferences from cookies
     !isNewNote && setText("Loading...")
     let font = localStorage.getItem("font")
     font !== null && setFontFamily(font)
@@ -104,7 +105,13 @@ const HomePage: React.FC<{ match: { params: { id: string } } }> = (props) => {
       )
     }
     //For Mac only using the meta (Command key)
-    if (e.metaKey && e.key === "s") {
+    if (navigator.platform.indexOf("Mac") === 0 && e.metaKey && e.key === "s") {
+      e.preventDefault()
+      await saveNote()
+      isNewNote && setRedir(true)
+    }
+    //For Windows only using the ctrl key
+    if (navigator.platform.indexOf("Win") === 0 && e.ctrlKey  && e.key === "s") {
       e.preventDefault()
       await saveNote()
       isNewNote && setRedir(true)
