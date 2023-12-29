@@ -3,15 +3,16 @@ import Button from './Button';
 import SimpleMenu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import SettingsIcon from '@material-ui/icons/Settings';
-import { Redirect } from 'react-router-dom'
+import { Redirect, useHistory } from 'react-router-dom'
 
 
 type Props = {
   setFont: (s: string) => void
   setHeader: (header: string) => void
   setPaper: (paper: string) => void
-  setDisplayLinks: () => void
+  setDisplayLinks?: () => void
   saveNote: () => Promise<string>
+  newPage: boolean
 }
 
 const Menu = (props: Props) => {
@@ -20,6 +21,8 @@ const Menu = (props: Props) => {
   const [id, setId] = useState("")
   const [redir, setRedir] = useState(false)
   const [width, setWidth] = useState(window.innerWidth)
+
+  let history = useHistory()
 
   window.onresize = () => setWidth(window.innerWidth)
 
@@ -43,19 +46,14 @@ const Menu = (props: Props) => {
   };
 
   const handleDisplayClose = () => {
-    props.setDisplayLinks()
+    props.setDisplayLinks && props.setDisplayLinks()
     setAnchorTheme(null);
   }
 
   const saveButton = async () => {
-    let _id = await props.saveNote()
-    setId(_id)
-    setRedir(true)
-  }
-
-  const renderRedir = () => {
-    if (redir) {
-      return <Redirect to={id} />
+    let id = await props.saveNote()
+    if (props.newPage) {
+      history.push(`/${id}`)
     }
   }
 
@@ -65,7 +63,6 @@ const Menu = (props: Props) => {
 
   return (
     <div style={{ width: "clamp(130px, 20%, 300px", position: "absolute", right: "2%", display: "flex" }}>
-      {renderRedir()}
       <Button aria-controls="simple-menu" aria-haspopup="true" variant="contained" color="primary" onClick={handleClick}>
         Font
       </Button>
