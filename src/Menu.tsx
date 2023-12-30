@@ -3,7 +3,7 @@ import Button from './Button';
 import SimpleMenu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import SettingsIcon from '@material-ui/icons/Settings';
-import { Redirect, useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 
 
 type Props = {
@@ -18,8 +18,6 @@ type Props = {
 const Menu = (props: Props) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [anchorTheme, setAnchorTheme] = React.useState<EventTarget & SVGSVGElement | null>(null);
-  const [id, setId] = useState("")
-  const [redir, setRedir] = useState(false)
   const [width, setWidth] = useState(window.innerWidth)
 
   let history = useHistory()
