@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import Header from "./Header"
 import { saveNotes, generateId } from "./Firebase"
 import { useHistory } from "react-router-dom"
@@ -9,6 +9,8 @@ const HomePage: React.FC = () => {
   const [paper, setPaper] = useState("https://i.imgur.com/QyKroGy.png")
 
   let history = useHistory()
+
+  const textRef = useRef(text);
 
   useEffect(() => {
     // Fetch preferences from cookies
@@ -22,6 +24,33 @@ const HomePage: React.FC = () => {
     localStorage.setItem("font", fontFamily)
     localStorage.setItem("paper", paper)
   }, [fontFamily, paper])
+  
+  // Update the ref whenever text changes
+  useEffect(() => {
+    textRef.current = text;
+  }, [text]);
+
+	// Add keydown listener to the body of the document
+	// This seems ugly but is the only way I know how in React
+	useEffect(() => {
+	  const saveKeybindListener = async (e: any) => {
+		if (navigator.platform.startsWith("Mac") && e.metaKey && e.key === "s"
+			|| (navigator.platform.startsWith("Win") && e.ctrlKey  && e.key === "s")
+			|| (navigator.platform.startsWith("Linux") && e.ctrlKey  && e.key === "s")) {
+
+		  e.preventDefault()
+		  let id = generateId()
+		  await saveNotes(id, textRef.current)
+		  history.push(`/${id}`)
+		}
+	  }
+	  document.addEventListener('keydown', saveKeybindListener);
+	  
+	  // Clean up with the same reference
+	  return () => {
+		document.removeEventListener('keydown', saveKeybindListener);
+	  };
+	}, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value)
@@ -38,23 +67,24 @@ const HomePage: React.FC = () => {
   }
 
   const keybinds = async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Tab") {
-      e.preventDefault()
-      e.currentTarget.setRangeText(
-        "    ",
-        e.currentTarget.selectionStart,
-        e.currentTarget.selectionStart,
-        "end"
-      )
-    }
-    //For Mac only using the meta (Command key)
-    if (navigator.platform.indexOf("Mac") === 0 && e.metaKey && e.key === "s") {
-      e.preventDefault()
-      let id = await saveNote()
-      history.push(`/${id}`)
-    }
-    //For Windows only using the ctrl key
-    if (navigator.platform.indexOf("Win") === 0 && e.ctrlKey  && e.key === "s") {
+	if (e.key == 'Tab') {
+		e.preventDefault();
+		let curr = e.currentTarget;
+		var start = curr.selectionStart;
+		var end = curr.selectionEnd;
+
+		// set textarea value to: text before caret + tab + text after caret
+		curr.value = curr.value.substring(0, start) +
+			"\t" + curr.value.substring(end);
+
+		// put caret at right position again
+		curr.selectionStart =
+		curr.selectionEnd = start + 1;
+	}
+    if (navigator.platform.startsWith("Mac") && e.metaKey && e.key === "s"
+		|| (navigator.platform.startsWith("Win") && e.ctrlKey  && e.key === "s")
+		|| (navigator.platform.startsWith("Linux") && e.ctrlKey  && e.key === "s")) {
+
       e.preventDefault()
       let id = await saveNote()
       history.push(`/${id}`)
@@ -74,6 +104,7 @@ const HomePage: React.FC = () => {
     boxSizing: "border-box",
     lineHeight: 1.6,
     height: "90%",
+	tabSize: 4,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     backgroundImage: `url(${paper})`,

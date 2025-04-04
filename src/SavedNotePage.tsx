@@ -13,6 +13,8 @@ const SavedNotePage: React.FC<{ match: { params: { id: string } } }> = (props) =
   let id = props.match.params.id
   let history = useHistory()
 
+  const textRef = useRef(text);
+
   useEffect(() => {
     // Fetch preferences from cookies
     let font = localStorage.getItem("font")
@@ -29,6 +31,7 @@ const SavedNotePage: React.FC<{ match: { params: { id: string } } }> = (props) =
     localStorage.setItem("links", displayLinks ? "true" : "")
 
   }, [fontFamily, paper, displayLinks])
+
 
   // Fetch text, change site title and load Links
   useEffect(() => {
@@ -71,6 +74,30 @@ const SavedNotePage: React.FC<{ match: { params: { id: string } } }> = (props) =
     }
   }, [displayLinks, text])
 
+  // Update the ref whenever text changes
+  useEffect(() => {
+    textRef.current = text;
+  }, [text]);
+
+	// Add keydown listener to the body of the document
+	// This seems ugly but is the only way I know how in React
+	useEffect(() => {
+	  const saveKeybindListener = async (e: any) => {
+		if (navigator.platform.startsWith("Mac") && e.metaKey && e.key === "s"
+			|| (navigator.platform.startsWith("Win") && e.ctrlKey  && e.key === "s")
+			|| (navigator.platform.startsWith("Linux") && e.ctrlKey  && e.key === "s")) {
+
+		  e.preventDefault()
+		  await saveNotes(id, textRef.current)
+		  history.push(`/${id}`)
+		}
+	  }
+	  document.addEventListener('keydown', saveKeybindListener);
+	  return () => {
+		document.removeEventListener('keydown', saveKeybindListener);
+	  };
+	}, [id]);
+
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value)
   }
@@ -85,23 +112,22 @@ const SavedNotePage: React.FC<{ match: { params: { id: string } } }> = (props) =
   }
 
   const keybinds = async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Tab") {
-      e.preventDefault()
-      e.currentTarget.setRangeText(
-        "    ",
-        e.currentTarget.selectionStart,
-        e.currentTarget.selectionStart,
-        "end"
-      )
-    }
-    //For Mac only using the meta (Command key)
-    if (navigator.platform.indexOf("Mac") === 0 && e.metaKey && e.key === "s") {
-      e.preventDefault()
-      await saveNote()
-      history.push(`/${id}`)
-    }
-    //For Windows only using the ctrl key
-    if (navigator.platform.indexOf("Win") === 0 && e.ctrlKey  && e.key === "s") {
+	if (e.key == 'Tab') {
+		e.preventDefault();
+		let curr = e.currentTarget;
+		var start = curr.selectionStart;
+		var end = curr.selectionEnd;
+
+		curr.value = curr.value.substring(0, start) +
+			"\t" + curr.value.substring(end);
+
+		curr.selectionStart =
+		curr.selectionEnd = start + 1;
+	}
+    if (navigator.platform.startsWith("Mac") && e.metaKey && e.key === "s"
+		|| (navigator.platform.startsWith("Win") && e.ctrlKey  && e.key === "s")
+		|| (navigator.platform.startsWith("Linux") && e.ctrlKey  && e.key === "s")) {
+
       e.preventDefault()
       await saveNote()
       history.push(`/${id}`)
@@ -134,6 +160,7 @@ const SavedNotePage: React.FC<{ match: { params: { id: string } } }> = (props) =
     boxSizing: "border-box",
     lineHeight: 1.6,
     height: displayLinks ? "80%" : "90%",
+	tabSize: 4,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     backgroundImage: `url(${paper})`,
