@@ -34,7 +34,7 @@ const HomePage: React.FC = () => {
 	// This seems ugly but is the only way I know how in React
 	useEffect(() => {
 	  const saveKeybindListener = async (e: any) => {
-		if (navigator.platform.startsWith("Mac") && e.metaKey && e.key === "s"
+		if ((navigator.platform.startsWith("Mac") && e.metaKey && e.key === "s")
 			|| (navigator.platform.startsWith("Win") && e.ctrlKey  && e.key === "s")
 			|| (navigator.platform.startsWith("Linux") && e.ctrlKey  && e.key === "s")) {
 
@@ -50,7 +50,7 @@ const HomePage: React.FC = () => {
 	  return () => {
 		document.removeEventListener('keydown', saveKeybindListener);
 	  };
-	}, []);
+	}, [history]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value)
@@ -67,7 +67,7 @@ const HomePage: React.FC = () => {
   }
 
   const keybinds = async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-	if (e.key == 'Tab') {
+	if (e.key === 'Tab') {
 		e.preventDefault();
 		let curr = e.currentTarget;
 		var start = curr.selectionStart;
@@ -81,7 +81,7 @@ const HomePage: React.FC = () => {
 		curr.selectionStart =
 		curr.selectionEnd = start + 1;
 	}
-    if (navigator.platform.startsWith("Mac") && e.metaKey && e.key === "s"
+    if ((navigator.platform.startsWith("Mac") && e.metaKey && e.key === "s")
 		|| (navigator.platform.startsWith("Win") && e.ctrlKey  && e.key === "s")
 		|| (navigator.platform.startsWith("Linux") && e.ctrlKey  && e.key === "s")) {
 

@@ -83,7 +83,7 @@ const SavedNotePage: React.FC<{ match: { params: { id: string } } }> = (props) =
 	// This seems ugly but is the only way I know how in React
 	useEffect(() => {
 	  const saveKeybindListener = async (e: any) => {
-		if (navigator.platform.startsWith("Mac") && e.metaKey && e.key === "s"
+		if ((navigator.platform.startsWith("Mac") && e.metaKey && e.key === "s")
 			|| (navigator.platform.startsWith("Win") && e.ctrlKey  && e.key === "s")
 			|| (navigator.platform.startsWith("Linux") && e.ctrlKey  && e.key === "s")) {
 
@@ -96,7 +96,7 @@ const SavedNotePage: React.FC<{ match: { params: { id: string } } }> = (props) =
 	  return () => {
 		document.removeEventListener('keydown', saveKeybindListener);
 	  };
-	}, [id]);
+	}, [id, history]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value)
@@ -112,7 +112,7 @@ const SavedNotePage: React.FC<{ match: { params: { id: string } } }> = (props) =
   }
 
   const keybinds = async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-	if (e.key == 'Tab') {
+	if (e.key === 'Tab') {
 		e.preventDefault();
 		let curr = e.currentTarget;
 		var start = curr.selectionStart;
@@ -124,7 +124,7 @@ const SavedNotePage: React.FC<{ match: { params: { id: string } } }> = (props) =
 		curr.selectionStart =
 		curr.selectionEnd = start + 1;
 	}
-    if (navigator.platform.startsWith("Mac") && e.metaKey && e.key === "s"
+    if ((navigator.platform.startsWith("Mac") && e.metaKey && e.key === "s")
 		|| (navigator.platform.startsWith("Win") && e.ctrlKey  && e.key === "s")
 		|| (navigator.platform.startsWith("Linux") && e.ctrlKey  && e.key === "s")) {
 
