@@ -45,6 +45,12 @@ const SavedNotePage: React.FC<{ match: { params: { id: string } } }> = (props) =
     //Anonymous function to run async code inside useEffect
     (async () => {
       let _text = await fetchNote()
+	  // Check if the note exists, redirect to 404 if not
+	  if (_text === null || _text === undefined) {
+	  	history.push('/NotFound')
+	  	return
+	  }
+
       // Update website title with first line of text limited to 40 characters
       document.title = _text.split("\n")[0].slice(0, 40)
 
@@ -56,7 +62,7 @@ const SavedNotePage: React.FC<{ match: { params: { id: string } } }> = (props) =
 
       setText(_text)
     })()
-  }, [id])
+  }, [id, history])
 
 
 

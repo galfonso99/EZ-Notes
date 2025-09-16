@@ -39,7 +39,7 @@ const HomePage: React.FC = () => {
 			|| (navigator.platform.startsWith("Linux") && e.ctrlKey  && e.key === "s")) {
 
 		  e.preventDefault()
-		  let id = generateId()
+		  let id = await generateId()
 		  await saveNotes(id, textRef.current)
 		  history.push(`/${id}`)
 		}
@@ -61,7 +61,7 @@ const HomePage: React.FC = () => {
   }
 
   const saveNote = async () => {
-    let _id = generateId()
+    let _id = await generateId()
     await saveNotes(_id, text)
     return _id
   }
